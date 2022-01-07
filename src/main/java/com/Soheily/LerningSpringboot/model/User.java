@@ -3,7 +3,7 @@ package com.Soheily.LerningSpringboot.model;
 import java.util.UUID;
 
 public class User {
-    private final UUID userId;
+    private  UUID userId;
 
     private final String userFirstName;
     private final String userLastName;
@@ -23,6 +23,7 @@ public class User {
     public UUID getUserId() {
         return userId;
     }
+    public void setUserUid(UUID uuid) {this.userId=uuid;}
 
     public String getUserFirstName() {
         return userFirstName;
@@ -55,6 +56,8 @@ public class User {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+
 
     public enum Gender {
         Male,

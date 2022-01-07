@@ -1,14 +1,16 @@
 package com.Soheily.LerningSpringboot.dao;
 
 import com.Soheily.LerningSpringboot.model.User;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+@Repository
 public class FakeDataDao implements UserDao {
 
-    private static Map<UUID, User> DataBase;
+    private  Map<UUID, User> DataBase;
 
-    static {
+    public FakeDataDao() {
         DataBase = new HashMap<>();
         UUID useruid = UUID.randomUUID();
         DataBase.put(useruid, new User(useruid, "Aref",
@@ -16,13 +18,13 @@ public class FakeDataDao implements UserDao {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<User> selectAllUsers() {
         return new ArrayList<>(DataBase.values());
     }
 
     @Override
-    public User getUser(UUID UserUid) {
-        return DataBase.get(UserUid);
+    public Optional<User> selectUserByUid(UUID UserUid) {
+        return Optional.ofNullable(DataBase.get(UserUid) );
     }
 
     @Override
@@ -32,15 +34,15 @@ public class FakeDataDao implements UserDao {
     }
 
     @Override
-    public int removeUser(UUID userId) {
+    public int deleteUser(UUID userId) {
         DataBase.remove(userId);
 
         return 1;
     }
 
     @Override
-    public int InsertUser(User user) {
-        DataBase.put(user.getUserId(), user);
+    public int insertUser(UUID userUid,User user) {
+        DataBase.put( userUid, user);
         return 1;
     }
 }
