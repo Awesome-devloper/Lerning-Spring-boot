@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -44,12 +46,36 @@ class UserServiceTest {
                 .build();
         given(fakeDataDao.selectAllUsers()).willReturn(users);
 
-        List<User> allUsers = userService.getAllUsers();
+        List<User> allUsers = userService.getAllUsers(Optional.empty());
         User user1=users.get(0);
         userFiledCheck(user1);
         assertThat(allUsers).hasSize(1);
     }
+    @Test
+    void ShouldGetUserByGender() {
+        UUID userUidForCur = UUID.randomUUID();
+        User user = new User(userUidForCur, "Aref", "Soheily"
+                , User.Gender.Male, 31, "aref.saas@gmail.com");
+        UUID userUidForSima = UUID.randomUUID();
+        User userSiam = new User(userUidForSima, "Sima", "Khosroshahi"
+                , User.Gender.FeMale, 31, "aref.saas@gmail.com");
 
+        ImmutableList<User> users = new ImmutableList.Builder<User>()
+                .add(user)
+                .add(userSiam)
+                .build();
+        given(fakeDataDao.selectAllUsers()).willReturn(users);
+
+        List<User> filterUsers = userService.getAllUsers(Optional.of("Male"));
+        assertThat(filterUsers).hasSize(1);
+        userFiledCheck( filterUsers.get(0));
+    }
+    @Test
+    void ShouldThrowExceptionWhenGenderIsInvalid() {
+        assertThatThrownBy(()->userService.getAllUsers(Optional.of("sdfsdfsdfsdf")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Invalid gender");
+    }
     @Test
     void ShouldgetUser() {
         UUID userUidForCur = UUID.randomUUID();
